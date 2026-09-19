@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>키 이벤트</title>
+    <script>
+        function keyDown(e){
+            let str="";
+            let div = document.getElementById("div");
+            div.innerHTML = "";
+            str += "e.key = " + e.key + "<br>"
+                + "e.code = " + e.code + "<br>";
+            div.innerHTML = str;
+        }
+    </script>
+</head>
+<body>
+    <h3>키 리스너와 키 이벤트 객체의 프로퍼티</h3>
+    <hr>
+    <input type="text" id="text" onkeydown="keyDown(event)">
+    <div id="div" style="background-color:skyblue; width:250px; height:50px"></div>
+    
+</body>
+</html>
