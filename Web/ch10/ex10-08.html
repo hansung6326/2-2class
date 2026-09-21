@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>웹 페이지 프린트</title>
+    <style>
+        #logoDiv {
+            display: none;
+            position: absolute;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* 로고 이미지를 문서의 제일 아래에 배치 */
+        }
+    </style>
+    <script>
+        
+        window.onbeforeprint = function (e){
+            let div = document.getElementById("logoDiv");
+            div.style.display = "block";
+        }
+        window.onafterprint = function hideLogo(){
+            let div = document.getElementById("logoDiv");
+            div.style.display = "none";
+        }
+    </script>
+</head>
+<body>
+    <h3>웹 페이지 프린트</h3>
+    <hr>
+    <div id="logoDiv"><img src="media/puppy.jpg" alt=""></div>
+    <button onclick="window.print()">프린트</button>
+    
+</body>
+</html>
