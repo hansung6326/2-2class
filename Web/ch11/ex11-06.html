@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+</head>    
+<body>
+    <canvas id="myCanvas" width="200" height="300" style="background-color:aliceblue"></canvas>
+    <script>
+        let canvas = document.getElementById("myCanvas");
+        let context = canvas.getContext("2d");
+
+        context.beginPath();
+        context.moveTo(20, 20);
+        context.lineTo(150, 50);
+        context.strokeStyle = "blue";
+        context.stroke();
+
+        context.beginPath();
+        context.rect(20, 80, 120, 50);
+        context.lineWidth = 10;
+        context.strokeStyle = "yellowgreen";
+        context.stroke();
+
+        context.beginPath();
+        context.arc(80, 220, 50, 0, 3*Math.PI/2, false);
+        context.lineWidth = 20;
+        context.strokeStyle = "violet";
+        context.stroke();
+
+    </script>
+</body>
+</html>
