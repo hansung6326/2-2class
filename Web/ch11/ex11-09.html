@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+</head>    
+<body>
+    <canvas id="myCanvas" width="500" height="420" style="background-color:aliceblue"></canvas>
+    <script>
+        let canvas = document.getElementById("myCanvas");
+        let context = canvas.getContext("2d");
+
+        let img = new Image();
+        img.onload = function (){
+            context.drawImage(img, 20, 20, 300, 200);
+        }
+        img.src = "media/puppy.jpg";
+
+    </script>
+</body>
+</html>
