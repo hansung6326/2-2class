@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    
+</head>    
+<body>
+    <canvas id="myCanvas" width="500" height="420" style="background-color:aliceblue"></canvas>
+    <script>
+        let canvas = document.getElementById("myCanvas");
+        let context = canvas.getContext("2d");
+
+        context.strokeStyle = "blue";
+
+        for(let i=0; i<4; i++){
+            context.font = (10 + i*10) + "px forte";
+            context.strokeText("Javascript 재밌다." , 10, 30+i*50);
+        }
+
+        context.font = "italic 50px forte";
+        context.strokeStyle = "magenta";
+        context.lineWidth = 3;
+        context.textAlign = "left";
+        context.strokeText("Javascript 재밌다.", 50, 250);
+
+        context.strokeStyle = "green";
+        context.textAlign = "right";
+        context.strokeText("Javascript 재밌다.", 490, 300);
+
+
+    </script>
+</body>
+</html>
