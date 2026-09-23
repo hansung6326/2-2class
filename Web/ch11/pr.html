@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>mousemove로 자유롭게 그리기</title>
+</head> 
+<body onload="init()">
+    <h3>mousemove로 자유롭게 그리세요.</h3>
+    <hr>
+    선굵기 : <input type="text" id="text" size="5"> 선 색 : <input type="color" id="color"><br>
+    <canvas id="myCanvas" width="500" height="400" style="background-color:lightblue"></canvas>
+    <script>
+        let canvas, context;
+        function init(){
+            canvas = document.getElementById("myCanvas");
+            context = canvas.getContext("2d");
+            
+            canvas.addEventListener("mousemove", function (e){move(e)}, false);
+            canvas.addEventListener("mouseover", function (e){over(e), false});
+            canvas.addEventListener("mouseout", function (e){out(e)}, false);
+        }
+
+        let startX = 0, startY = 0;
+        let dragging = false;
+
+        function draw(curX, curY){
+
+            context.lineWidth = document.getElementById("text").value;
+            context.strokeStyle = document.getElementById("color").value;
+
+            context.beginPath();
+            context.moveTo(startX, startY);
+            context.lineTo(curX, curY);
+            context.stroke();
+        }
+        function over(e){
+            startX = e.offsetX;
+            startY = e.offsetY;
+            dragging = true;
+        }
+        function move(e){
+            if(!dragging)
+                return;
+            let curX = e.offsetX;
+            let curY = e.offsetY;
+            draw(curX, curY);
+            startX = curX;
+            startY = curY;
+        }
+        function out(e){
+            dragging = false;
+        }
+    </script>
+</body>
+</html>
