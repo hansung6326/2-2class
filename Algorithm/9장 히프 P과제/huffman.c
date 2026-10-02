@@ -122,4 +122,126 @@ int read_input(char** ch_out, int** freq_out){
     int n = 0, count = 0;
     char ch;
     int f;
+
+    printf("입력 파일 이름 : ");
+    if(fgets(fname, sizeof(fname), stdin) == NULL)
+        return 0;
+    fname[strcspn(fname, "\r\n")] = '\0';
+
+    if(fname[0] != '\0'){
+        fp = fopen(fname, "r");
+        if(fp == NULL){
+            printf("파일 열기 실패 : %s\n", fname);
+            return 0;
+        }
+        if(fscnaf(fp, "%d", &n) != 1)
+            n = 0;
+    }
+    else{
+        printf("문자 개수? ");
+        if(scanf("%d", &n) != 1)
+            n = 0;
+    }
+    if(n < 2){
+        printf("문자는 2개 이상 입력해야 합니다.\n");
+        if(fp)
+            fclose(fp);
+        return 0;
+    }
+
+    char* ch_list = (char*)malloc(n);
+    int* freq = (int*)malloc(sizeof(int) * n);
+
+    for(int i=0; i<n; i++){
+        if(fp){
+            if(fscanf(fp, " %c %d", &ch, &f) != 2)
+                break;
+            if(is_duplicate(ch_list, count, ch)){
+                printf("중복된 문자 %c 제외\n", ch);
+                continue;
+            }
+        }
+        else{
+            printf("문자? ");
+            scanf(" %c", &ch);
+            if(is_duplicate(ch_list, count, ch)){
+                printf("이미 입력한 문자입니다. 다시 입력하세요.\n");
+                i--;
+                continue;
+            }
+            printf("빈도수? ");
+            scanf("%d", &f);
+
+        }
+        ch_list[count] = ch;
+        freq[count] = f;
+        count++;
+    }
+    if(fp){
+        fclose(fp);
+        printf("읽은 자료 %d개: ", count);
+        for(int i=0; i<count; i++){
+            printf("%c(%d) ", ch_list[i], freq[i]);
+        }
+        printf("\n");
+    }
+    
+    *ch_out = ch_list;
+    *freq_out = freq;
+    return count;
 }
+
+TreeNode* huffman_tree(int freq[], char ch_list[], int n){
+    int i;
+    TreeNode *node, *x;
+    HeapType* heap;
+    element e, e1, e2;
+
+    heap = create(n);
+    init(heap);
+    for(i=0; i<n; i++){
+        node = make_tree(NULL, NULL);
+        node->name[0] = ch_list[i];
+        node->name[1] = '\0';
+        e.key = node->weight = freq[i];
+        e.ptree = node;
+        insert_min_heap(heap, e);
+    }
+    for(i = 1; i<n; i++){
+        e1 = delete_min_heap(heap);
+        e2 = delete_min_heap(heap);
+        
+        x = make_tree(e1.ptree, e2.ptree);
+        sprintf(x->name, "H-%d", i);
+        e.key = x->weight = e1.key + e2.key;
+        e.ptree = x;
+        printf("%s(%d) + %s(%d) -> %s(%d)\n", e1.ptree->name, e1.key, e2.ptree->name, e2.key, x->name, e.key);
+        insert_min_heap(heap, e);
+    }
+
+    e = delete_min_heap(heap);
+    free(heap->heap);
+    free(heap);
+    return e.ptree;
+
+}
+
+int main(void){
+    char* ch_list;
+    int* freq;
+    char* table[256] = {NULL};
+    int n, i;
+
+    n = read_input(&ch_list, &freq);
+    if(n < 2)
+        return 1;
+    
+    printf("\n----- 허프만 트리 생성 -----\n");
+    TreeNode* root = huffman_tree(freq, ch_list, n);
+    printf("\n----- 전위 순회 결과 -----\n");
+    preorder(root);
+    printf("\n");
+
+    
+}
+
