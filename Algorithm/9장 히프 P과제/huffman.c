@@ -242,6 +242,99 @@ int main(void){
     preorder(root);
     printf("\n");
 
+    printf("\n----- 허프만 코드(%d개) -----\n", n);
+    char* buf = (char*)malloc(n + 1);
+    make_codes(root, buf, 0, table);
+    free(buf);
+
+    int fixed_bits = 0;
+    while((1 << fixed_bits)< n){
+        fixed_bits++;
+    }
+    long total_freq = 0, huff_total = 0;
+    for(i=0; i<n; i++){
+        total_freq += freq[i];
+        huff_total += (long)freq[i] * (long)strlen(table[(unsigned char)ch_list[i]]);
+    }
+
+    printf("\n----- 비트 수 비교 -----\n");
+    printf("고정 길이 %d 비트 : %ld bits\n", fixed_bits, total_freq *fixed_bits);
+    printf("허프만 코드 \t : %ld bits\n", huff_total);
+
+    int max_len;
+    char fmt[20];
+    char *str, *code;
+
+    printf("\n----- 인코딩 -----\n");
+    printf("문자열 최대 길이? ");
+    scanf("%d", &max_len);
+    str = (char*)malloc(max_len + 1);
+    sprintf(fmt, "%s", max_len);
+    printf("문자열? ");
+    scanf(fmt, str);
+
+    int code_len = 0, ok = 1;
+    for(i=0; str[i]; i++){
+        if(table[(unsigned char)str[i]] == NULL){
+            printf("%c는 코드표에 없는 문자입니다.\n", str[i]);
+            ok = 0;
+            break;
+        }
+        code_len += (int)strlen(table[(unsigned char)str[i]]);
+    }
+    if(ok){
+        code = (char*)malloc(code_len + 1);
+        code[0] = '\0';
+        for(i = 0; str[i]; i++){
+            strcat(code, table[(unsigned char)str[i]]);
+        }
+        printf("코드열: %s\n", code);
+        free(code)
+    }
+    free(str);
+
+    printf("\n----- 디코딩 -----");
+    printf("코드열 최대 길이? ");
+    scanf("%d", &max_len);
+    code = (char*)malloc(max_len + 1);
+    sprintf(fmt, "%s", max_len);
+    printf("코드열? ");
+    scanf(fmt, code);
+
+    TreeNode* p = root;
+    ok = 1;
+    printf("문자열: ");
+    for(i=0; code[i]; i++){
+        if(code[i] == '1')
+            p = p->left;
+        else if(code[i] == '0')
+            p = p->right;
+        else{
+            ok = 0;
+            break;
+        }
+        if(is_leaf(p)){
+            putchar(p->name[0]);
+            p = root;
+        }
+    }
+
+    printf("\n");
+
+    if(!ok)
+        printf("0과 1만 입력해야 합니다.\n");
+    else if(p != root)
+        printf("코드열이 중간에 끝났습니다.\n");
     
+    free(code);
+
+    for(i = 0; i < 256; i++){
+        free(table[i]);
+    }
+    destroy_tree(root);
+    free(ch_list);
+    free(freq);
+
+    return 0;
 }
 
