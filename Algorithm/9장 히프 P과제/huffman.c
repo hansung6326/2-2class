@@ -51,7 +51,7 @@ element delete_min_heap(HeapType* h){
     child = 2;
 
     while(child <= h->heap_size){
-        if((child <= h->heap_size) && (h->heap[child].key > h->heap[child + 1].key)){
+        if((child < h->heap_size) && (h->heap[child].key > h->heap[child + 1].key)){
             child++;
         }
         if(temp.key < h->heap[child].key)
@@ -104,7 +104,7 @@ void make_codes(TreeNode* root, char buf[], int top, char* table[]){
         buf[top] = '\0';
         printf("%c: %s\n", root->name[0], buf);
         table[(unsigned char)root->name[0]] = (char*)malloc(top + 1);
-        srtcpy(table[(unsigned char)root->name[0]], buf);
+        strcpy(table[(unsigned char)root->name[0]], buf);
     }
 }
 
@@ -134,7 +134,7 @@ int read_input(char** ch_out, int** freq_out){
             printf("파일 열기 실패 : %s\n", fname);
             return 0;
         }
-        if(fscnaf(fp, "%d", &n) != 1)
+        if(fscanf(fp, "%d", &n) != 1)
             n = 0;
     }
     else{
@@ -262,16 +262,14 @@ int main(void){
     printf("허프만 코드 \t : %ld bits\n", huff_total);
 
     int max_len;
-    char fmt[20];
     char *str, *code;
 
     printf("\n----- 인코딩 -----\n");
     printf("문자열 최대 길이? ");
     scanf("%d", &max_len);
     str = (char*)malloc(max_len + 1);
-    sprintf(fmt, "%s", max_len);
     printf("문자열? ");
-    scanf(fmt, str);
+    scanf("%s", str);
 
     int code_len = 0, ok = 1;
     for(i=0; str[i]; i++){
@@ -289,17 +287,16 @@ int main(void){
             strcat(code, table[(unsigned char)str[i]]);
         }
         printf("코드열: %s\n", code);
-        free(code)
+        free(code);
     }
     free(str);
 
-    printf("\n----- 디코딩 -----");
+    printf("\n----- 디코딩 -----\n");
     printf("코드열 최대 길이? ");
     scanf("%d", &max_len);
     code = (char*)malloc(max_len + 1);
-    sprintf(fmt, "%s", max_len);
     printf("코드열? ");
-    scanf(fmt, code);
+    scanf("%s", code);
 
     TreeNode* p = root;
     ok = 1;
