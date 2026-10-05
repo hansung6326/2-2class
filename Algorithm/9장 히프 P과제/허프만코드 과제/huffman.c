@@ -103,8 +103,8 @@ void make_codes(TreeNode* root, char buf[], int top, char* table[]){
     if(is_leaf(root)){
         buf[top] = '\0';
         printf("%c: %s\n", root->name[0], buf);
-        table[(unsigned char)root->name[0]] = (char*)malloc(top + 1);
-        strcpy(table[(unsigned char)root->name[0]], buf);
+        table[root->name[0]] = (char*)malloc(top + 1);
+        strcpy(table[root->name[0]], buf);
     }
 }
 
@@ -116,29 +116,27 @@ int is_duplicate(char ch_list[], int count, char ch){
     return 0;
 }
 
-int read_input(char** ch_out, int** freq_out){
+int read_input(int mode, char** ch_out, int** freq_out){
     char fname[256];
     FILE* fp = NULL;
     int n = 0, count = 0;
     char ch;
     int f;
 
-    printf("입력 파일 이름 : ");
-    if(fgets(fname, sizeof(fname), stdin) == NULL)
-        return 0;
-    fname[strcspn(fname, "\r\n")] = '\0';
-
-    if(fname[0] != '\0'){
-        fp = fopen(fname, "r");
-        if(fp == NULL){
-            printf("파일 열기 실패 : %s\n", fname);
-            return 0;
+    if(mode == 2){
+        while(1){
+            printf("입력 파일 이름 : ");
+            scanf("%s", fname);
+            fp = fopen(fname, "r");
+            if(fp != NULL)
+                break;
+            printf("파일 열기 실패 : %s는 없는 파일입니다.\n", fname);
         }
         if(fscanf(fp, "%d", &n) != 1)
             n = 0;
     }
     else{
-        printf("문자 개수? ");
+        printf("문자 개수 : ");
         if(scanf("%d", &n) != 1)
             n = 0;
     }
@@ -162,14 +160,14 @@ int read_input(char** ch_out, int** freq_out){
             }
         }
         else{
-            printf("문자? ");
+            printf("문자 : ");
             scanf(" %c", &ch);
             if(is_duplicate(ch_list, count, ch)){
                 printf("이미 입력한 문자입니다. 다시 입력하세요.\n");
                 i--;
                 continue;
             }
-            printf("빈도수? ");
+            printf("빈도수 : ");
             scanf("%d", &f);
 
         }
@@ -179,7 +177,7 @@ int read_input(char** ch_out, int** freq_out){
     }
     if(fp){
         fclose(fp);
-        printf("읽은 자료 %d개: ", count);
+        printf("읽은 자료 %d개 : ", count);
         for(int i=0; i<count; i++){
             printf("%c(%d) ", ch_list[i], freq[i]);
         }
@@ -226,15 +224,15 @@ TreeNode* huffman_tree(int freq[], char ch_list[], int n){
 
 }
 
-int main(void){
+void run(int mode){
     char* ch_list;
     int* freq;
     char* table[256] = {NULL};
     int n, i;
 
-    n = read_input(&ch_list, &freq);
+    n = read_input(mode, &ch_list, &freq);
     if(n < 2)
-        return 1;
+        return;
     
     printf("\n----- 허프만 트리 생성 -----\n");
     TreeNode* root = huffman_tree(freq, ch_list, n);
@@ -251,40 +249,40 @@ int main(void){
     while((1 << fixed_bits)< n){
         fixed_bits++;
     }
-    long total_freq = 0, huff_total = 0;
+    int total_freq = 0, huff_total = 0;
     for(i=0; i<n; i++){
         total_freq += freq[i];
-        huff_total += (long)freq[i] * (long)strlen(table[(unsigned char)ch_list[i]]);
+        huff_total += freq[i] * strlen(table[ch_list[i]]);
     }
 
     printf("\n----- 비트 수 비교 -----\n");
-    printf("고정 길이 %d 비트 : %ld bits\n", fixed_bits, total_freq *fixed_bits);
-    printf("허프만 코드 \t : %ld bits\n", huff_total);
+    printf("고정 길이 %d 비트 : %d bits\n", fixed_bits, total_freq *fixed_bits);
+    printf("허프만 코드 \t : %d bits\n", huff_total);
 
     int max_len;
     char *str, *code;
 
     printf("\n----- 인코딩 -----\n");
-    printf("문자열 최대 길이? ");
+    printf("문자열 최대 길이 : ");
     scanf("%d", &max_len);
     str = (char*)malloc(max_len + 1);
-    printf("문자열? ");
+    printf("문자열 : ");
     scanf("%s", str);
 
     int code_len = 0, ok = 1;
     for(i=0; str[i]; i++){
-        if(table[(unsigned char)str[i]] == NULL){
+        if(table[str[i]] == NULL){
             printf("%c는 코드표에 없는 문자입니다.\n", str[i]);
             ok = 0;
             break;
         }
-        code_len += (int)strlen(table[(unsigned char)str[i]]);
+        code_len += (int)strlen(table[str[i]]);
     }
     if(ok){
         code = (char*)malloc(code_len + 1);
         code[0] = '\0';
         for(i = 0; str[i]; i++){
-            strcat(code, table[(unsigned char)str[i]]);
+            strcat(code, table[str[i]]);
         }
         printf("코드열: %s\n", code);
         free(code);
@@ -292,15 +290,15 @@ int main(void){
     free(str);
 
     printf("\n----- 디코딩 -----\n");
-    printf("코드열 최대 길이? ");
+    printf("코드열 최대 길이 : ");
     scanf("%d", &max_len);
     code = (char*)malloc(max_len + 1);
-    printf("코드열? ");
+    printf("코드열 : ");
     scanf("%s", code);
 
     TreeNode* p = root;
     ok = 1;
-    printf("문자열: ");
+    printf("문자열 : ");
     for(i=0; code[i]; i++){
         if(code[i] == '1')
             p = p->left;
@@ -319,7 +317,7 @@ int main(void){
     printf("\n");
 
     if(!ok)
-        printf("0과 1만 입력해야 합니다.\n");
+        printf("0과 1만 입력할 수 있습니다.\n");
     else if(p != root)
         printf("코드열이 중간에 끝났습니다.\n");
     
@@ -331,7 +329,27 @@ int main(void){
     destroy_tree(root);
     free(ch_list);
     free(freq);
+}
+
+int main(void){
+    int menu;
+
+    while(1){
+        printf("\n1. 키보드 입력  2. 텍스트 파일 입력  3. 종료\n");
+        printf("선택 : ");
+        if(scanf("%d", &menu) != 1){
+            while(getchar() != '\n');
+            menu = 0;
+        }
+
+        if(menu == 3)
+            break;
+        else if(menu == 1 || menu == 2)
+            run(menu);
+        else
+            printf("1, 2, 3 중에서 선택하세요.\n");
+    }
+    printf("프로그램을 종료합니다.\n");
 
     return 0;
 }
-
