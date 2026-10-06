@@ -17,15 +17,15 @@
             }
 
             let obj = document.getElementById("msg");
-            obj.innerHTML = "";
-            for(let i=0; i<localStorage.length; i++){
-                let key = localStorage.key(i);
-                let val = localStorage.getItem(key);
-                if(i == localStorage.length-1)
-			        obj.innerHTML += (key + "=" + val);
-		        else
-			        obj.innerHTML += (key + "=" + val) + "<br>"; 
+            let key = ["food", "city"];
+            let lines = [];
+
+            for(let i=0; i<key.length; i++){
+                let val = localStorage.getItem(key[i]);
+                if(val != null)
+                    lines.push(key[i] + "=" + val);
             }
+            obj.innerHTML = lines.join("<br>");
         }
     </script>
     <style>
