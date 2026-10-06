@@ -33,7 +33,7 @@
                 username = "아무개";
             }
             else{
-                expire.SetTime(expire.getTime() + (365 * 24 * 3600 * 1000));
+                expire.setTime(expire.getTime() + (365 * 24 * 3600 * 1000));
                 SetCookie("username",username,expire);
             }
         }
