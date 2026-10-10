@@ -10,4 +10,6 @@ onmessage = function (e){
         this.postMessage("D");
     else if(60 > e.data && e.data >= 0)
         this.postMessage("F");
+    else
+        this.postMessage("잘못된 점수입니다.");
 }
