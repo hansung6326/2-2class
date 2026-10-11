@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr08</title>
+    <style>
+        div{
+            position: absolute;
+        }
+        img{
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h3>pr08</h3>
+    <hr>
+    <p id="p" onclick="change()">이번 여름에는 어디로 여행을 갈까요?</p>
+    <script>
+        function change(){
+            let p = document.getElementById("p");
+            let text = prompt("HTML 텍스트 혹은 그냥 텍스트를 입력하세요");
+            if(text == null || text == "")   // 취소 또는 빈 입력이면
+                return;
+            p.innerHTML = text;
+        }
+    </script>
+</body>
+</html>
