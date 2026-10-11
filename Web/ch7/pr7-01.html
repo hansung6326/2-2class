@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr07</title>
+</head>
+<body>
+    <h3>pr07</h3>
+    <hr>
+    <script>
+        let n=[];
+        for(let i=0; i<10; i++){
+            n[i] = parseInt(Math.random()*100 + 1);
+        }
+        for(let i=0; i<10; i++){
+            document.write(n[i] + " ");
+        }
+        document.write("<hr>");
+        let big = n[0];
+        for(let i=0; i<10; i++){
+            if(n[i] > big)
+                big = n[i];
+        }
+        document.write("제일 큰 수는 " + big);
+        document.write("<hr>");
+        n.sort();
+        for(let i=0; i<10; i++){
+            document.write(n[i] + " ");
+        }
+    </script>
+</body>
+</html>
