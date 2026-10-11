@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr08</title>
+    <style>
+        div{
+            position: absolute;
+        }
+        img{
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h3>pr08</h3>
+    <hr>
+    <div onclick="f()">
+        <img src="media/spade-A.png" width="100" height="140" alt="스페이드A">
+        <img src="media/spade-2.png" width="100" height="140" alt="스페이드2">
+        <img src="media/spade-3.png" width="100" height="140" alt="스페이드3">
+        <img src="media/spade-7.png" width="100" height="140" alt="스페이드7">
+    </div>
+    <script>
+        let img = document.getElementsByTagName("img");
+        for(let i =0; i<img.length; i++){
+            img[i].style.zIndex = i;
+        }
+        function f(){
+            for(let i=0; i<img.length; i++){
+                img[i].style.zIndex++;
+                img[i].style.zIndex %= img.length;
+            }
+        }
+    </script>
+</body>
+</html>
