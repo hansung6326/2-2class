@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr07</title>
+</head>
+<body>
+    <h3>pr07</h3>
+    <hr>
+    <script>
+        let bookArray = new Array();
+        for(let j=0; j<5; j++){
+            let book = new Object();
+            let str = prompt("콤마(,)로 분리하면서 책제목 저자 가격 순으로 입력");
+            let sub = str.split(",");
+            book.title = sub[0].trim();
+            book.author = sub[1].trim();
+            book.price = parseInt(sub[2]);
+            document.write(book.title + ", " + book.author + ", " + book.price + "<br>");
+            bookArray[j] = book;
+        }
+
+        let exp = bookArray[0].price;
+        let index = 0;
+        for(let i=0; i<5; i++){
+            if(bookArray[i].price > exp){
+            exp = bookArray[i].price;
+            index = i;
+            }       
+        }
+        document.write("<br>");
+        document.write("가장 가격이 비싼 책은 " + bookArray[index].title);
+    </script>
+</body>
+</html>
