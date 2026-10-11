@@ -23,7 +23,7 @@
         }
         document.write("제일 큰 수는 " + big);
         document.write("<hr>");
-        n.sort();
+        n.sort(function(a,b){return a - b});
         for(let i=0; i<10; i++){
             document.write(n[i] + " ");
         }
