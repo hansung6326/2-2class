@@ -22,14 +22,11 @@
     <script>
         function change(){
             let span = document.getElementsByTagName("span");
-            if(span[0].style.visibility == "visible"){
-                for(let i=0; i<span.length; i++){
+            for(let i=0; i<span.length; i++){
+                if(span[i].style.visibility == "visible")
                     span[i].style.visibility = "hidden";
-                }
-            }else{
-                for(let i=0; i<span.length; i++){
+                else
                     span[i].style.visibility = "visible";
-                }
             }
             
         }
