@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr08</title>
+    <style>
+        div{
+            position: absolute;
+        }
+        img{
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <h3>pr08</h3>
+    <hr>
+    <img src="media/spongebob.png" width="150" height="200" onclick="rot(this)">
+    <script>
+        let deg = 0;
+        function rot(obj){
+            deg += 90;
+            obj.style.transform = "rotate(" + deg + "deg)";
+            deg %= 360;
+        }
+    </script>
+</body>
+</html>
