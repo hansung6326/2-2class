@@ -9,7 +9,7 @@
     <hr>
     <script>
         let current = new Date();
-        if(current.getHours >= 0 && current.getHours < 12)
+        if(current.getHours() < 12)
             document.body.style.background = "lightskyblue";
         else
             document.body.style.background  = "orange";
