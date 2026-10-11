@@ -9,36 +9,15 @@
     <hr>
     <script>
         let current = new Date();
+        let days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
 
         if(current.getDay() == 0)
             document.body.style.background = "pink";
         else
             document.body.style.background = "gold";
 
-        document.write("오늘 : " + current.getDate() + "일, ");
-        switch(current.getDay()){
-        case 0:
-            document.write("일요일");
-            break;
-        case 1:
-            document.write("월요일");
-            break;
-        case 2:
-            document.write("화요일");
-            break;
-        case 3:
-            document.write("수요일");
-            break;
-        case 4:
-            document.write("목요일");
-            break;
-        case 5:
-            document.write("금요일");
-            break;
-        case 6:
-            document.write("토요일");
-            break;
-    }
+        document.write("오늘 : " + current.getDate() + "일, " + days[current.getDay()]);
+        
     </script>
 </body>
 </html>
