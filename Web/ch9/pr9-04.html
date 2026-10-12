@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr09</title>
+</head>
+<body>
+    <h3>pr09</h3>
+    <hr>
+    마우스를 움직이면 이미지로 만든 커서가 마우스를 따라다닙니다
+    <div id="div" style="position: absolute">
+        <img src="media/spongebob.png" width="30px" height="30px">
+    </div>
+    <script>
+        let div = document.getElementById("div");
+        window.onmousemove = function (e){
+            div.style.left = e.clientX + "px";
+            div.style.top = e.clientY + "px";
+        }
+        document.body.style.cursor = "none";
+    </script>
+</body>
+</html>
