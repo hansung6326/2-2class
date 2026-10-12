@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr09</title>
+</head>
+<body>
+    <h3>pr09</h3>
+    <hr>
+    이미지 위에 휠을 위로 굴리면 이미지가 축소되고 아래로 굴리면 이미지가 확대됩니다<br>
+    <img id="img" src="media/tulips.png">
+    <script>
+        let img = document.getElementById("img");
+        img.onwheel = function (e){
+            if(e.wheelDelta < 0){
+                img.width *= 1.05;
+                img.height *= 1.05;
+            }else if(e.wheelDelta > 0){
+                img.width *= 0.95;
+                img.height *= 0.95;
+            }
+        }
+    </script>
+</body>
+</html>
