@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr09</title>
+</head>
+<body>
+    <h3>pr09</h3>
+    <hr>
+    <form>
+        <input type="radio" name="fruit" value="media/banana.png" onchange="show()">바나나
+        <input type="radio" name="fruit" value="media/mango.png" onchange="show()">망고
+        <input type="radio" name="fruit" value="media/apple.png" onchange="show()">사과
+    </form>
+    <img id="img" src="">
+
+    <script>
+        function show(){
+            let found = null;
+            let fruit = document.getElementsByName("fruit");
+            for(let i=0; i<fruit.length; i++){
+                if(fruit[i].checked == true)
+                    found = fruit[i];
+            }
+            if(found != null)
+                document.getElementById("img").src = found.value;
+        }
+
+    </script>
+</body>
+</html>
