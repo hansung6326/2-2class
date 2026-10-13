@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr11</title>
+    <script>
+        function drawCircle(context, x, y, r){
+            context.beginPath();
+            context.strokeStyle = "black";
+            context.arc(x, y, r, 0, Math.PI*2);
+            context.stroke();
+        }
+    </script>
+</head>
+<body>
+    <h3>pr11</h3>
+    <hr>
+    <canvas id="myCanvas" width="300" height="220" style="background-color: aliceblue;"></canvas>
+    <script>
+        let canvas = document.getElementById("myCanvas");
+        let context = canvas.getContext("2d");
+        drawCircle(context, 100, 100, 80);
+        drawCircle(context, 150, 150, 30);
+
+        
+    </script>
+</body>
+</html>
