@@ -17,7 +17,7 @@
         function view(){
             if(window.localStorage){
                 let str = "";
-                for(let i=0; i<localStorage.length; i++){
+                for(let i=0; i<localStorage.length; i++){ 
                     let key = localStorage.key(i);
                     let val = localStorage.getItem(key);
                     str += key + "=" + val + "<br>";
