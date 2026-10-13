@@ -11,7 +11,7 @@
             }
             let title = document.getElementById("title");
             let memo = document.getElementById("memo");
-            localStorage.setItem(title, memo);
+            localStorage.setItem(title.value, memo.value);
         }
         function view(){
             window.open("pr12-03-2.html", "newWin");
