@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>mousedown과 mouseup으로 선 그리기</title>
+<script>
+window.onload = init; // 웹 페이지가 모두 적재되어 출력된 후 발생하는 load 이벤트 처리. init() 함수 호출
+
+let canvas, context; // 전역 변수
+
+function init() {
+	canvas = document.getElementById("myCanvas");
+	context = canvas.getContext("2d");
+	context.lineWidth = 2; // 선 굵기를 2로 설정
+	context.strokeStyle = "blue";
+	canvas.addEventListener("mousemove", function (e) { move(e) }, false);
+	canvas.addEventListener("mousedown", function (e) { down(e) }, false);	
+	canvas.addEventListener("mouseup", function (e) { up(e) }, false);		
+}
+
+let startX=0, startY=0; // 마우스의 마지막 포인터 좌표, 전역 변수
+let dragging=false;
+function draw(curX, curY) { // e는 MouseEvent 객체
+	context.beginPath();
+	context.moveTo(startX, startY);
+	context.lineTo(curX, curY);
+	context.stroke();
+}
+function move(e) {
+	if(!dragging) return;
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	let curX = e.offsetX;
+	let curY = e.offsetY;
+	draw(curX, curY);
+}
+function down(e) {
+	startX = e.offsetX;
+	startY = e.offsetY;
+	dragging = true;
+}
+function up(e) {
+	let curX = e.offsetX;
+	let curY = e.offsetY;
+	draw(curX, curY);
+	dragging = false;
+}
+</script></head>
+<body>
+<h3>mousedown과 mouseup으로 선 그리기</h3>
+<hr>
+<canvas id="myCanvas" style="background-color:aliceblue"
+	 width="500" height="200"></canvas>	 
+</body>
+</html>
