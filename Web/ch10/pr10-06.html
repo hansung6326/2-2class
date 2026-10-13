@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr10</title>
+    <style>
+        #div{
+            background-color: lightblue;
+            border : 1px solid;
+            width: 7em;
+        }
+    </style>
+</head>
+<body>
+    <h3>pr10</h3>
+    <hr>
+    <div id="div"></div>
+    <script>
+        let div = document.getElementById("div");
+        timer();
+        let timerID = setInterval("timer()", 1000);
+        function timer(){
+            let date = new Date();
+            div.innerHTML = date.toLocaleTimeString();
+        }
+        div.onclick = function (){
+            if(timerID != null){
+                clearInterval(timerID);
+                div.style.opacity = 0.4;
+                timerID = null;
+                
+            }else{
+                timerID = setInterval("timer()", 1000);
+                div.style.opacity = 1;
+            }
+        }
+    </script>
+</body>
+</html>
