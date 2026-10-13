@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr12</title>
+    <script>
+        let name = document.getElementById("name");
+        let num = document.getElementById("number");
+        function store(){
+            if(!window.sessionStorage){
+                alert("세션 스토리지를 지원하지 않습니다.");
+                return;
+            }
+           sessionStorage.setItem(name.value, num.value);
+        }
+    </script>
+</head>
+<body>
+    <h3>pr12</h3>
+    <hr>
+    이름 <input id="name" type="text"><br>
+    학번 <input type="text" id="number"> <button onclick="store()">스토리지에 저장</button>
+    <a href="pr12-01-2.html">이름으로 학번 검색 페이지로</a>
+</body>
+</html>
