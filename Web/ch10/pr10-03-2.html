@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr10</title>
+</head>
+<body>
+    <h3>pr10</h3>
+    <hr>
+    접속할 사이트 <br>
+    <select id="site" onchange="newWin()">
+        <option value="https://www.naver.com/">네이버</option>
+        <option value="https://www.google.com/?hl=ko">구글</option>
+        <option value="https://www.oracle.com/kr/">오라클</option>
+    </select>
+    
+    <script>
+        function newWin(){
+            let site = document.getElementById("site");
+            let sel = site.options[site.selectedIndex].value;
+            window.open(sel, "newWin", "width=1000, height=700");
+        }
+        
+
+    </script>
+</body>
+</html>
