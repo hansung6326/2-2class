@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr12</title>
+    <script>
+        function search(){
+            let name = document.getElementById("name");
+            let num = document.getElementById("num");
+            if(!window.sessionStorage){
+                alert("세션 스토리지 불가");
+                return;
+            }
+            num.value = sessionStorage.getItem(name.value);
+        }
+    </script>
+</head>
+<body>
+    <h3>pr12</h3>
+    <hr>
+    품목명 : <input type="text" id="name"> 개수 : <input type="text" id="num"><br>
+    <button onclick="search()">검색</button>
+</body>
+</html>
