@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr10</title>
+</head>
+<body onload="isChrome()">
+    <h3>pr10</h3>
+    <hr>
+    <script>
+        function isChrome(){
+            let agent = navigator.userAgent.toLowerCase();
+            let vendor = navigator.vendor.toLowerCase();
+
+            if(agent.indexOf("chrome") != -1 && vendor.indexOf("google") != -1){
+                alert("구글 Chrome 브라우저입니다.");
+            }else{
+                alert("구글 Chrome 브라우저가 아닙니다.");
+            }
+
+        }
+    </script>
+</body>
+</html>
