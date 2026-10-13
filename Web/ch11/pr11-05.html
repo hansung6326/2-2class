@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr11</title>
+    <style>
+        td{
+            text-align: right;
+        }
+    </style>
+    <script>
+        function draw(){
+            let canvas = document.getElementById("myCanvas");
+            let context = canvas.getContext("2d");
+            context.lineWidth = document.getElementById("lw").value;  //number의 value여도 문자열이라서 정수형으로 바꿔주면 좋긴 하지만
+            context.strokeStyle = document.getElementById("color").value; //lineWidth나 strokeRect 에서 알아서 조정해줌 근데 + 연산 하면 정수형으로 해야함
+            context.strokeRect(document.getElementById("x").value, document.getElementById("y").value,
+                                document.getElementById("w").value, document.getElementById("h").value);
+
+        }
+        function erase(){
+            let canvas = document.getElementById("myCanvas");
+            let context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</head>
+<body>
+    <h3>pr11</h3>
+    <hr>
+    <table>
+        <tr><td>x</td><td><input id="x" type="number"></td><td>y</td><td><input id="y" type="number"></td></tr>
+        <tr><td>width</td><td><input id="w" type="number"></td><td>height</td><td><input id="h" type="number"></td></tr>
+        <tr><td>선굵기</td><td><input id="lw" type="number"></td><td></td><td>선색<input id="color" type="color"></td></tr>
+        <tr><td></td><td><input type="button" value="그리기" onclick="draw()"></td><td></td><td><input type="button" value="지우기" onclick="erase()"></td></tr>
+    </table>
+    <canvas id="myCanvas" width="500" height="400" style="background-color: aliceblue;"></canvas>
+</body>
+</html>
