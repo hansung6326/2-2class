@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr10</title>
+    <style>
+        #div{
+            background-color: lightblue;
+            border : 1px solid;
+            width: 7em;
+        }
+    </style>
+</head>
+<body onload="timer()">
+    <h3>pr10</h3>
+    <hr>
+    <div id="div"></div>
+    <script>
+        let div = document.getElementById("div");
+        function timer(){
+            timeOut(div);
+        }
+        function timeOut(obj){
+            let date = new Date();
+            obj.innerHTML = date.toLocaleTimeString();
+            setTimeout("timeOut(div)", 1000);
+        }
+    </script>
+</body>
+</html>
