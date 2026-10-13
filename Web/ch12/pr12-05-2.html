@@ -13,10 +13,20 @@
         }
     </style>
     <script>
-        
+        function view(){
+            if(window.localStorage){
+                let str = "";
+                for(let i=0; i<localStorage.length; i++){
+                    let key = localStorage.key(i);
+                    let val = localStorage.getItem(key);
+                    str += key + "=" + val + "<br>";
+                }
+                document.getElementById("div").innerHTML = str;
+            }
+        }
     </script>
 </head>
-<body>
+<body onload="view()">
     <h3>pr12</h3>
     <hr>
     <div id="div"></div>
