@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr12</title>
+    <script>
+        function store(){
+            if(!window.localStorage){
+                alert("지원하지 않음");
+                return;
+            }
+            let date = document.getElementById("date");
+            let memo = document.getElementById("memo");
+            localStorage.setItem(date.value, memo.value);
+        }
+        function view(){
+            window.open("pr12-04-1.html", "newWin");
+        }
+    </script>
+</head>
+<body>
+    <h3>pr12</h3>
+    <hr>
+    오늘 <p id="date"><script>
+        let date = new Date();
+        document.write(date.toLocaleDateString);
+    </script></p><br>
+    <textarea id="memo"></textarea>
+    <br>
+    <button onclick="store()">저장</button>
+    <button onclick="view()">보기</button>
+
+</body>
+</html>
