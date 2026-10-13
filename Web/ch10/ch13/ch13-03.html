@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>비디오 원본 크기로 출력</title>
+</head>
+<body>
+    <h3>비디오 원본 크기로 출력</h3>
+    <hr>
+    <video src="media/bear.mp4" id="video" width="0" height="0" controls></video>
+    <script>
+        let video = document.getElementById("video");
+        video.onloadedmetadata = function (e){
+            alert(video.videoWidth + "x" + video.videoHeight);
+            video.width = video.videoWidth;
+            video.height = video.videoHeight;
+        }
+    </script>
+    
+</body>
+</html>
