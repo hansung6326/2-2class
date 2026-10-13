@@ -2,45 +2,23 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>선택한 도시와 음식 보여주기</title>
-    <script>
-        window.addEventListener("storage", storageEventListener, false);
-        window.onload = show;
-
-        function storageEventListener(e){
-            show();
-        }
-        function show(){
-            if(!window.localStorage){
-                alert("지원하지 않습니다");
-                return;
-            }
-
-            let obj = document.getElementById("msg");
-            let key = ["food", "city"];
-            let lines = [];
-
-            for(let i=0; i<key.length; i++){
-                let val = localStorage.getItem(key[i]);
-                if(val != null)
-                    lines.push(key[i] + "=" + val);
-            }
-            obj.innerHTML = lines.join("<br>");
-        }
-    </script>
+    <title>pr12</title>
     <style>
         div{
             display: inline-block;
             border: 1px solid yellowgreen;
-            width: 300px;
-            padding-left: 20px;
+            width: 300;
+            padding-left: 10px;
+            padding-bottom: 10px;
         }
     </style>
+    <script>
+        
+    </script>
 </head>
 <body>
-    <h3>제출자: 안태호</h3>
-    <h3>선택한 도시와 음식 보여주기</h3>
+    <h3>pr12</h3>
     <hr>
-    <div id="msg">입력 없음</div>
+    <div id="div"></div>
 </body>
 </html>
