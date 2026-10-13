@@ -7,12 +7,13 @@
         div{
             display: inline-block;
             border: 1px solid yellowgreen;
-            width: 300;
+            width: 300px;
             padding-left: 10px;
             padding-bottom: 10px;
         }
     </style>
     <script>
+        window.addEventListener("storage", view);
         function view(){
             if(window.localStorage){
                 let str = "";
