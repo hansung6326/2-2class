@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr12</title>
+    <script>
+        function store(){
+            if(!window.localStorage){
+                alert("지원하지 않음");
+                return;
+            }
+            let title = document.getElementById("title");
+            let memo = document.getElementById("memo");
+            localStorage.setItem(title, memo);
+        }
+        function view(){
+            window.open("pr12-03-2.html", "newWin");
+        }
+    </script>
+</head>
+<body>
+    <h3>pr12</h3>
+    <hr>
+    제목 <input type="text" id="title"><br>
+    메모입력<br>
+    <textarea id="memo"></textarea><br>
+    <button onclick="store()">저장</button><button onclick="view()">보기</button>
+
+</body>
+</html>
