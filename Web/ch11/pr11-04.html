@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr11</title>
+</head>
+<body>
+    <h3>pr11</h3>
+    <hr>
+    <canvas id="myCanvas" width="500" height="420" style="background-color: aliceblue;"></canvas>
+    <script>
+        let canvas = document.getElementById("myCanvas");
+        let context =canvas.getContext("2d");
+        let img = new Image();
+        img.onload = function (){
+            context.drawImage(img, 50, 50, 200, 200);
+            context.fillStyle = "magenta";
+            context.font = "100px forte";
+            context.fillText("Spongebob", 50, 200);
+            context.strokeStyle = "blue";
+            context.lineWidth = 3;
+            context.strokeText("Spongebob", 50, 200);
+        }
+        img.src = "media/spongebob.png";
+        
+    </script>
+</body>
+</html>
