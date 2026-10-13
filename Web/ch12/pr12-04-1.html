@@ -9,22 +9,24 @@
                 alert("지원하지 않음");
                 return;
             }
-            let date = document.getElementById("date");
+            let date = new Date();
+            let str = date.toLocaleDateString();
             let memo = document.getElementById("memo");
-            localStorage.setItem(date.value, memo.value);
+            localStorage.setItem(str, memo.value);
         }
         function view(){
-            window.open("pr12-04-1.html", "newWin");
+            window.open("pr12-04-2.html", "newWin");
         }
     </script>
 </head>
 <body>
     <h3>pr12</h3>
     <hr>
-    오늘 <p id="date"><script>
+    <script>
         let date = new Date();
-        document.write(date.toLocaleDateString);
-    </script></p><br>
+        let str = date.toLocaleDateString();
+        document.write("오늘 " + str);
+    </script><br>
     <textarea id="memo"></textarea>
     <br>
     <button onclick="store()">저장</button>

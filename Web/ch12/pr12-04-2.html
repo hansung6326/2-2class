@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr12</title>
+    <style>
+        table{
+            background-color: aliceblue;
+        }
+        span{
+            border: 1px solid yellowgreen;
+            padding-left: 3px;
+            padding-right: 3px;
+        }
+        td{
+            padding-right: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h3>포스트잇</h3>
+    <hr>
+    <script>
+        if(window.localStorage){
+            document.write("<table>");
+            for(let i=0; i<localStorage.length; i++){
+                let key = localStorage.key(i);
+                let text = localStorage.getItem(key);
+                document.write("<tr><td><span>" + (i+1) + "</span></td>");
+                document.write("<th>" + key + "</th>");
+                document.write("<td>" + text + "</td></tr>");
+            }
+            document.write("</table>");
+        }else{
+            alert("지원하지 않음");
+        }
+    </script>
+</body>
+</html>
