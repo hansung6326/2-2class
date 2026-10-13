@@ -24,7 +24,7 @@
         if(window.localStorage){
             document.write("<table>");
             for(let i=0; i<localStorage.length; i++){
-                let key = localStorage.key[i];
+                let key = localStorage.key(i);
                 let text = localStorage.getItem(key);
                 document.write("<tr><td><span>" + (i+1) + "</span></td>");
                 document.write("<th>" + key + "</th>");
