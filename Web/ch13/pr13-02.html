@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>오디오 재생</title>
+    <style>
+        span {
+            border: 1px solid yellowgreen;
+            padding-left: 3px;
+            padding-right: 3px;
+        }
+        td, th {
+            padding-right: 5px;
+            text-align: left;
+        }
+        th {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        let prev = null;   // 이전에 재생한 곡의 제목(th)을 기억
+
+        function play(titleId, fileName){
+            let audio = document.getElementById("audio");
+            let title = document.getElementById(titleId);
+
+            if(prev != null)                    // 이전 곡 제목 색을 원래대로
+                prev.style.color = "black";
+            title.style.color = "magenta";      // 지금 곡 제목을 자홍색으로
+            prev = title;
+
+            audio.src = "media/" + fileName;
+            audio.play();
+        }
+
+        function stop(){
+            let audio = document.getElementById("audio");
+            audio.pause();
+        }
+    </script>
+</head>
+<body>
+<h3>오디오 재생</h3>
+<hr>
+<audio id="audio" controls>
+    웹 브라우저가 audio 태그를 지원하지 않습니다.
+</audio>
+
+<table>
+    <tr>
+        <td><span>1</span></td>
+        <th id="t1">애국가</th>
+        <td>
+            <button onclick="play('t1', 'Aegukga.mp3')">재생</button>
+            <button onclick="stop()">중지</button>
+        </td>
+    </tr>
+    <tr>
+        <td><span>2</span></td>
+        <th id="t2">Moon Glow</th>
+        <td>
+            <button onclick="play('t2', 'MoonGlow.mp3')">재생</button>
+            <button onclick="stop()">중지</button>
+        </td>
+    </tr>
+    <tr>
+        <td><span>3</span></td>
+        <th id="t3">Embraceable You</th>
+        <td>
+            <button onclick="play('t3', 'EmbraceableYou.mp3')">재생</button>
+            <button onclick="stop()">중지</button>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
