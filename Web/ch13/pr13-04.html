@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>오디오 재생</title>
+    <script>
+        let list = [];    // 재생할 파일 목록
+        let index = 0;    // 지금 재생 중인 곡의 번호
+
+        function start(){
+            let songs = document.getElementsByName("song");
+            list = [];                                   // 목록 비우기
+            for(let i = 0; i < songs.length; i++){
+                if(songs[i].checked == true)
+                    list.push("media/" + songs[i].value + ".mp3");
+            }
+            if(list.length == 0){
+                alert("곡을 선택하세요.");
+                return;
+            }
+            index = 0;
+            playSong();
+        }
+
+        function playSong(){
+            let audio = document.getElementById("audio");
+            audio.src = list[index];
+            audio.play();
+        }
+
+        function next(){                 // 한 곡이 끝나면 호출됨
+            index++;
+            if(index < list.length)      // 남은 곡이 있으면
+                playSong();              // 다음 곡 재생
+        }
+    </script>
+</head>
+<body>
+<h3>오디오 재생</h3>
+<p>듣고 싶은 곡은 선택하고 시작 버튼을 누르면 연속하여 자동 연주합니다.</p>
+<hr>
+<audio id="audio" src="media/Aegukga.mp3" controls onended="next()">
+    웹 브라우저가 audio 태그를 지원하지 않습니다.
+</audio>
+<div><input type="checkbox" name="song" value="Aegukga"> 애국가</div>
+<div><input type="checkbox" name="song" value="MoonGlow"> Moon Glow</div>
+<div><input type="checkbox" name="song" value="EmbraceableYou"> Embraceable You</div>
+<div><input type="checkbox" name="song" value="Aegukga"> 애국가</div>
+<button onclick="start()">연주시작</button>
+</body>
+</html>
