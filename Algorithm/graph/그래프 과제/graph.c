@@ -1,393 +1,340 @@
 /*
  * 알고리즘 그래프 프로그래밍 과제 (주간반)
- *  - 입력 : graph_B.txt (명령행 인자로 전달)   예) graph graph_B.txt
- *  - 1. Kruskal 알고리즘 : 최소/최대 비용 신장 트리
- *  - 2. Prim    알고리즘 : 최소/최대 비용 신장 트리 (주간반 출발 노드: 7)
- *  - 3. Dijkstra 최단 경로 : 시작 노드 -> 모든 노드 (길이 + 경로)
- *  - 4. Floyd    최단 경로 : 임의의 출발/도착 노드 쌍 (길이 + 경로)
- *                            + 모든 노드 쌍의 최단 경로 길이와 경로
- *  - 노드 번호는 1번부터, 999 는 간선이 없음을 의미
+ *
+ *  실행 방법 : graph graph_B.txt
+ *
+ *  1. Kruskal : 최소/최대 비용 신장 트리 (union-find 사용)
+ *  2. Prim    : 최소/최대 비용 신장 트리 (주간반 출발 노드 = 7)
+ *  3. Dijkstra: 시작 노드 -> 다른 모든 노드의 최단 경로
+ *  4. Floyd   : 두 노드 사이 최단 경로 + 모든 노드 쌍의 최단 경로
+ *
+ *  - 노드 번호는 1번부터 출력한다. (배열 인덱스는 0번부터)
+ *  - 파일에서 999 는 간선이 없음을 뜻한다.
  */
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ------------------------------------------------------------------ */
-/* 한글 출력 설정                                                       */
-/*  소스의 한글(UTF-8)을 유니코드로 바꿔 콘솔에 직접 출력하므로            */
-/*  콘솔 코드페이지(CP949/UTF-8)나 컴파일러(gcc/Visual Studio)와 상관없이  */
-/*  한글이 깨지지 않는다.                                                */
-/* ------------------------------------------------------------------ */
-#ifdef _MSC_VER
-#pragma execution_character_set("utf-8")
-#endif
-#ifdef _WIN32
-#include <windows.h>
-#include <stdarg.h>
+#define TRUE  1
+#define FALSE 0
+#define NONE  999        /* 파일에서 간선이 없음을 나타내는 값 */
+#define INF   1000000    /* 최단 경로 계산에서 사용하는 무한대 */
 
-int u8printf(const char *fmt, ...)
+int num_node;            /* 노드의 개수 */
+int **weight;            /* 인접 행렬 weight[i][j] (동적 할당) */
+
+
+/* ================================================================== */
+/*  1. Kruskal 알고리즘 (강의자료 : union-find, struct Edge, qsort)      */
+/* ================================================================== */
+
+int *parent;             /* 부모 노드 (-1 이면 자기가 루트) */
+
+void set_init(int n)
 {
-	static char    buf[8192];
-	static wchar_t wbuf[8192];
-	va_list ap;
-	int n, wn;
-	DWORD mode, written;
-	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-
-	va_start(ap, fmt);
-	n = vsnprintf(buf, sizeof(buf), fmt, ap);
-	va_end(ap);
-
-	if (GetConsoleMode(h, &mode)) {          /* 콘솔 창이면 유니코드로 출력 */
-		wn = MultiByteToWideChar(CP_UTF8, 0, buf, -1, wbuf, 8192);
-		if (wn > 1)
-			WriteConsoleW(h, wbuf, (DWORD)(wn - 1), &written, NULL);
-	} else {                                 /* 파일로 리다이렉트된 경우 */
-		fputs(buf, stdout);
-	}
-	return n;
-}
-#define printf u8printf
-#endif
-
-#define NO_EDGE  999        /* 파일에서 간선 없음을 나타내는 값 */
-#define INF      1000000    /* 최단 경로 계산용 무한대 */
-#define MIN_TREE 0
-#define MAX_TREE 1
-
-typedef struct {
-	int u, v;      /* 노드 번호 (0부터, 출력할 때 +1) */
-	int w;         /* 가중치 */
-} Edge;
-
-int num_node;      /* 노드 개수 */
-int *weight;       /* 인접 행렬 (num_node * num_node, 동적 할당) */
-
-#define W(i, j) weight[(i) * num_node + (j)]
-
-/* 간선이 존재하는지 검사 (자기 자신, 999 는 간선이 아님) */
-int has_edge(int i, int j)
-{
-	return i != j && W(i, j) != NO_EDGE;
+	int i;
+	for (i = 0; i < n; i++)
+		parent[i] = -1;
 }
 
-/* ------------------------------------------------------------------ */
-/* 입력 보조 함수                                                       */
-/* ------------------------------------------------------------------ */
-void clear_input(void)
+/* curr 가 속하는 집합(루트)을 반환한다. */
+int set_find(int curr)
 {
-	int c;
-	while ((c = getchar()) != '\n' && c != EOF)
-		;
+	if (parent[curr] == -1)
+		return curr;                       /* 루트 */
+	while (parent[curr] != -1) curr = parent[curr];
+	return curr;
 }
 
-/* 창이 바로 닫히지 않도록 Enter 를 기다린 뒤 종료 */
-void pause_exit(void)
+/* 두 개의 원소가 속한 집합을 합친다. */
+void set_union(int a, int b)
 {
-	printf("\n종료하려면 Enter 키를 누르세요...");
-	fflush(stdout);
-	getchar();
+	int root1 = set_find(a);               /* 노드 a의 루트를 찾는다. */
+	int root2 = set_find(b);               /* 노드 b의 루트를 찾는다. */
+	if (root1 != root2)                    /* 합한다. */
+		parent[root1] = root2;
 }
 
-/* 최소(0) / 최대(1) 선택 */
-int input_min_max(void)
+struct Edge {                              /* 간선을 나타내는 구조체 */
+	int start, end, weight;
+};
+
+/* qsort()에 사용되는 함수 : 가중치 오름차순 (최소비용) */
+int compare_min(const void *a, const void *b)
 {
-	int sel;
-	while (1) {
-		printf("Min = 0, Max = 1\n--> ");
-		if (scanf("%d", &sel) == 1 && (sel == MIN_TREE || sel == MAX_TREE))
-			return sel;
-		printf("0또는 1이 아닙니다. 다시 입력해주세요\n");
-		clear_input();
-	}
+	struct Edge *x = (struct Edge *)a;
+	struct Edge *y = (struct Edge *)b;
+	return (x->weight - y->weight);
 }
 
-/* 1 ~ num_node 범위의 노드 번호 입력, 0부터 시작하는 인덱스로 반환 */
-int input_node(const char *msg)
+/* qsort()에 사용되는 함수 : 가중치 내림차순 (최대비용) */
+int compare_max(const void *a, const void *b)
 {
-	int node;
-	while (1) {
-		printf("%s(1 ~ %d)\n--> ", msg, num_node);
-		if (scanf("%d", &node) == 1 && node >= 1 && node <= num_node)
-			return node - 1;
-		printf("잘못된 노드 번호입니다. 다시 입력해주세요\n");
-		clear_input();
-	}
+	struct Edge *x = (struct Edge *)a;
+	struct Edge *y = (struct Edge *)b;
+	return (y->weight - x->weight);
 }
 
-const char *tree_name(int type)
-{
-	return type == MIN_TREE ? "최소비용신장트리" : "최대비용신장트리";
-}
-
-/* ------------------------------------------------------------------ */
-/* 1. Kruskal 알고리즘 (Union-Find 사용)                                 */
-/* ------------------------------------------------------------------ */
-int sort_type;     /* qsort 비교 함수에서 사용할 정렬 방향 */
-
-int compare_edge(const void *a, const void *b)
-{
-	const Edge *x = (const Edge *)a;
-	const Edge *y = (const Edge *)b;
-	if (x->w != y->w)
-		return sort_type == MIN_TREE ? x->w - y->w : y->w - x->w;
-	if (x->u != y->u) return x->u - y->u;
-	return x->v - y->v;
-}
-
-/* parent[i] == -1 이면 i 가 집합의 대표(루트) */
-int set_find(int *parent, int i)
-{
-	while (parent[i] != -1)
-		i = parent[i];
-	return i;
-}
-
-void set_union(int *parent, int a, int b)
-{
-	parent[b] = a;          /* 루트 b 를 루트 a 밑으로 붙인다 */
-}
-
+/* type : 0 이면 최소비용, 1 이면 최대비용 신장 트리 */
 void kruskal(int type)
 {
-	Edge *edges, *tree;
-	int *parent;
-	int edge_cnt = 0, accepted = 0, sum = 0;
-	int i, j, ru, rv;
+	struct Edge *edges;
+	int edge_count = 0;                    /* 그래프에 있는 간선의 수 */
+	int edge_accepted = 0;                 /* 현재까지 선택된 간선의 수 */
+	int uset, vset, i, j, sum = 0;
+	struct Edge e;
 
-	edges  = (Edge *)malloc(sizeof(Edge) * num_node * num_node);
-	tree   = (Edge *)malloc(sizeof(Edge) * num_node);
-	parent = (int *)malloc(sizeof(int) * num_node);
-
-	/* 무방향 그래프이므로 i < j 인 간선만 수집 */
+	/* 무방향 그래프이므로 i < j 인 칸만 보면서 간선을 모은다. */
+	edges = (struct Edge *)malloc(sizeof(struct Edge) * num_node * num_node);
 	for (i = 0; i < num_node; i++)
 		for (j = i + 1; j < num_node; j++)
-			if (has_edge(i, j)) {
-				edges[edge_cnt].u = i;
-				edges[edge_cnt].v = j;
-				edges[edge_cnt].w = W(i, j);
-				edge_cnt++;
+			if (weight[i][j] != NONE) {
+				edges[edge_count].start = i;
+				edges[edge_count].end = j;
+				edges[edge_count].weight = weight[i][j];
+				edge_count++;
 			}
 
-	/* 최소 : 오름차순, 최대 : 내림차순 정렬 */
-	sort_type = type;
-	qsort(edges, edge_cnt, sizeof(Edge), compare_edge);
+	parent = (int *)malloc(sizeof(int) * num_node);
+	set_init(num_node);
 
-	for (i = 0; i < num_node; i++)
-		parent[i] = -1;
-
-	for (i = 0; i < edge_cnt && accepted < num_node - 1; i++) {
-		ru = set_find(parent, edges[i].u);
-		rv = set_find(parent, edges[i].v);
-		if (ru != rv) {                 /* 사이클이 생기지 않으면 채택 */
-			set_union(parent, ru, rv);
-			tree[accepted++] = edges[i];
-		}
+	if (type == 0) {
+		qsort(edges, edge_count, sizeof(struct Edge), compare_min);
+		printf("\n크루스칼 최소 비용 신장 트리 알고리즘\n");
+	} else {
+		qsort(edges, edge_count, sizeof(struct Edge), compare_max);
+		printf("\n크루스칼 최대 비용 신장 트리 알고리즘\n");
 	}
 
-	printf("\n[Kruskal %s]\n", tree_name(type));
-	if (accepted != num_node - 1) {
-		printf("%s를 구할 수 없다\n", tree_name(type));
-	} else {
-		for (i = 0; i < accepted; i++) {
-			printf("(%d,%d) %d \n", tree[i].u + 1, tree[i].v + 1, tree[i].w);
-			sum += tree[i].w;
+	i = 0;
+	while (edge_accepted < num_node - 1 && i < edge_count) {  /* 신장트리 간선의 수 = (n-1) */
+		e = edges[i];
+		uset = set_find(e.start);          /* 정점 u의 집합 번호 */
+		vset = set_find(e.end);            /* 정점 v의 집합 번호 */
+		if (uset != vset) {                /* 서로 속한 집합이 다르면 (사이클이 안 생기면) */
+			printf("간선 (%d,%d) %d 선택\n", e.start + 1, e.end + 1, e.weight);
+			sum += e.weight;
+			edge_accepted++;
+			set_union(uset, vset);         /* 두개의 집합을 합친다. */
 		}
-		printf("Total sum = %d\n", sum);
+		i++;
+	}
+
+	if (edge_accepted < num_node - 1) {
+		if (type == 0) printf("최소비용신장트리를 구할 수 없다\n");
+		else           printf("최대비용신장트리를 구할 수 없다\n");
+	} else {
+		printf("가중치 합 = %d\n", sum);
 	}
 
 	free(edges);
-	free(tree);
 	free(parent);
 }
 
-/* ------------------------------------------------------------------ */
-/* 2. Prim 알고리즘                                                     */
-/* ------------------------------------------------------------------ */
-void prim(int type, int start)
+
+/* ================================================================== */
+/*  2. Prim 알고리즘 (강의자료 : selected[], distance[], get_min_vertex)  */
+/* ================================================================== */
+
+int *selected;           /* 신장 트리에 포함되었는지 표시 */
+int *distance;           /* 신장 트리까지의 최소(최대) 가중치 */
+int *from;               /* distance 값을 만든 트리 쪽 정점 (간선 출력용) */
+
+/* 선택되지 않은 정점 중 distance 가 가장 작은 정점을 반환 */
+int get_min_vertex(int n)
 {
-	int *selected, *key, *from;
-	Edge *tree;
-	int i, k, u, cnt = 0, sum = 0;
+	int v = -1, i;
+	for (i = 0; i < n; i++)
+		if (!selected[i] && distance[i] != INF)
+			if (v == -1 || distance[i] < distance[v]) v = i;
+	return v;            /* -1 이면 더 이상 연결된 정점이 없음 */
+}
+
+/* 선택되지 않은 정점 중 distance 가 가장 큰 정점을 반환 */
+int get_max_vertex(int n)
+{
+	int v = -1, i;
+	for (i = 0; i < n; i++)
+		if (!selected[i] && distance[i] != -1)
+			if (v == -1 || distance[i] > distance[v]) v = i;
+	return v;
+}
+
+/* s : 출발 정점, type : 0 최소 / 1 최대 */
+void prim(int s, int type)
+{
+	int i, u, v, sum = 0;
+	int no_value = (type == 0) ? INF : -1;   /* 아직 연결 간선이 없을 때의 값 */
 
 	selected = (int *)malloc(sizeof(int) * num_node);
-	key      = (int *)malloc(sizeof(int) * num_node);   /* 트리까지의 최선 가중치 */
-	from     = (int *)malloc(sizeof(int) * num_node);   /* 그 간선의 트리 쪽 노드 */
-	tree     = (Edge *)malloc(sizeof(Edge) * num_node);
+	distance = (int *)malloc(sizeof(int) * num_node);
+	from     = (int *)malloc(sizeof(int) * num_node);
+
+	for (u = 0; u < num_node; u++) {
+		distance[u] = no_value;
+		selected[u] = FALSE;
+		from[u] = -1;
+	}
+	distance[s] = 0;
+
+	if (type == 0) printf("\n프림 최소 비용 신장 트리 알고리즘 (출발 노드 %d)\n", s + 1);
+	else           printf("\n프림 최대 비용 신장 트리 알고리즘 (출발 노드 %d)\n", s + 1);
 
 	for (i = 0; i < num_node; i++) {
-		selected[i] = 0;
-		key[i] = -1;          /* -1 : 아직 트리와 연결되는 간선이 없음 */
-		from[i] = -1;
-	}
-	key[start] = 0;
+		if (type == 0) u = get_min_vertex(num_node);
+		else           u = get_max_vertex(num_node);
 
-	for (k = 0; k < num_node; k++) {
-		/* 트리에 없는 노드 중 key 가 가장 작은(최대 트리면 가장 큰) 노드 선택 */
-		u = -1;
-		for (i = 0; i < num_node; i++) {
-			if (selected[i] || key[i] == -1) continue;
-			if (u == -1 ||
-			    (type == MIN_TREE && key[i] < key[u]) ||
-			    (type == MAX_TREE && key[i] > key[u]))
-				u = i;
-		}
-		if (u == -1) break;   /* 더 이상 연결할 수 있는 노드가 없음 */
-
-		selected[u] = 1;
-		if (from[u] != -1) {
-			tree[cnt].u = from[u];
-			tree[cnt].v = u;
-			tree[cnt].w = W(from[u], u);
-			cnt++;
+		if (u == -1) {                     /* 연결되지 않은 정점이 남아 있음 */
+			if (type == 0) printf("최소비용신장트리를 구할 수 없다\n");
+			else           printf("최대비용신장트리를 구할 수 없다\n");
+			free(selected); free(distance); free(from);
+			return;
 		}
 
-		/* 새로 들어온 u 를 통해 key 값 갱신 */
-		for (i = 0; i < num_node; i++) {
-			if (selected[i] || !has_edge(u, i)) continue;
-			if (key[i] == -1 ||
-			    (type == MIN_TREE && W(u, i) < key[i]) ||
-			    (type == MAX_TREE && W(u, i) > key[i])) {
-				key[i] = W(u, i);
-				from[i] = u;
+		selected[u] = TRUE;
+		if (from[u] != -1) {               /* 출발 정점이 아니면 간선 출력 */
+			printf("간선 (%d,%d) %d 선택\n", from[u] + 1, u + 1, weight[from[u]][u]);
+			sum += weight[from[u]][u];
+		}
+
+		/* 새로 들어온 u 와 인접한 정점들의 distance 갱신 */
+		for (v = 0; v < num_node; v++) {
+			if (selected[v] || weight[u][v] == NONE || u == v) continue;
+			if ((type == 0 && weight[u][v] < distance[v]) ||
+			    (type == 1 && weight[u][v] > distance[v])) {
+				distance[v] = weight[u][v];
+				from[v] = u;               /* tree[v] <- u */
 			}
 		}
 	}
+	printf("가중치 합 = %d\n", sum);
 
-	printf("\n[Prim %s] 출발 노드 : %d\n", tree_name(type), start + 1);
-	if (cnt != num_node - 1) {
-		printf("%s를 구할 수 없다\n", tree_name(type));
-	} else {
-		for (i = 0; i < cnt; i++) {
-			printf("(%d,%d) %d \n", tree[i].u + 1, tree[i].v + 1, tree[i].w);
-			sum += tree[i].w;
-		}
-		printf("Total sum = %d\n", sum);
-	}
-
-	free(selected);
-	free(key);
-	free(from);
-	free(tree);
+	free(selected); free(distance); free(from);
 }
 
-/* ------------------------------------------------------------------ */
-/* 3. Dijkstra 최단 경로                                                */
-/* ------------------------------------------------------------------ */
-/* prev[] 를 따라 거꾸로 올라가며 경로를 출력 (재귀) */
-void print_dijkstra_path(int *prev, int v)
+
+/* ================================================================== */
+/*  3. Dijkstra 최단 경로 (강의자료 : distance[], found[], prev[], choose) */
+/* ================================================================== */
+
+int *found;              /* 최단 경로가 확정된 정점 표시 */
+int *prev;               /* 최단 경로에서 바로 앞 정점 */
+
+/* 확정되지 않은 정점 중 distance 가 가장 작은 정점 */
+int choose(int distance[], int n, int found[])
+{
+	int i, min, minpos;
+	min = INF;
+	minpos = -1;
+	for (i = 0; i < n; i++)
+		if (distance[i] < min && !found[i]) {
+			min = distance[i];
+			minpos = i;
+		}
+	return minpos;
+}
+
+/* prev[] 를 거꾸로 따라가며 경로를 출력 (재귀) */
+void print_path(int v)
 {
 	if (prev[v] != -1) {
-		print_dijkstra_path(prev, prev[v]);
+		print_path(prev[v]);
 		printf(" -> ");
 	}
 	printf("%d", v + 1);
 }
 
-void dijkstra(int start)
+void shortest_path(int start)
 {
-	int *dist, *found, *prev;
-	int i, k, u;
+	int i, u, w;
 
-	dist  = (int *)malloc(sizeof(int) * num_node);
-	found = (int *)malloc(sizeof(int) * num_node);
-	prev  = (int *)malloc(sizeof(int) * num_node);   /* 경로상 직전 노드 */
+	distance = (int *)malloc(sizeof(int) * num_node);
+	found    = (int *)malloc(sizeof(int) * num_node);
+	prev     = (int *)malloc(sizeof(int) * num_node);
 
-	for (i = 0; i < num_node; i++) {
-		dist[i] = has_edge(start, i) ? W(start, i) : INF;
-		prev[i] = has_edge(start, i) ? start : -1;
-		found[i] = 0;
+	for (i = 0; i < num_node; i++) {       /* 초기화 */
+		if (weight[start][i] == NONE) {
+			distance[i] = INF;
+			prev[i] = -1;
+		} else {
+			distance[i] = weight[start][i];
+			prev[i] = start;
+		}
+		found[i] = FALSE;
 	}
-	dist[start] = 0;
+	found[start] = TRUE;                   /* 시작 정점 방문 표시 */
+	distance[start] = 0;
 	prev[start] = -1;
-	found[start] = 1;
 
-	for (k = 0; k < num_node - 1; k++) {
-		/* 아직 확정되지 않은 노드 중 거리가 가장 짧은 노드 */
-		u = -1;
-		for (i = 0; i < num_node; i++)
-			if (!found[i] && dist[i] < INF && (u == -1 || dist[i] < dist[u]))
-				u = i;
-		if (u == -1) break;
-		found[u] = 1;
-
-		for (i = 0; i < num_node; i++)
-			if (!found[i] && has_edge(u, i) && dist[u] + W(u, i) < dist[i]) {
-				dist[i] = dist[u] + W(u, i);
-				prev[i] = u;
-			}
+	for (i = 0; i < num_node - 1; i++) {
+		u = choose(distance, num_node, found);
+		if (u == -1) break;                /* 더 이상 갈 수 있는 정점이 없음 */
+		found[u] = TRUE;
+		for (w = 0; w < num_node; w++)
+			if (!found[w] && weight[u][w] != NONE)
+				if (distance[u] + weight[u][w] < distance[w]) {
+					distance[w] = distance[u] + weight[u][w];
+					prev[w] = u;           /* 경로 저장 */
+				}
 	}
 
-	printf("\n[Dijkstra 최단 경로] 시작 노드 : %d\n", start + 1);
+	printf("\nDijkstra 최단 경로 (시작 노드 %d)\n", start + 1);
 	for (i = 0; i < num_node; i++) {
 		if (i == start) continue;
-		if (dist[i] >= INF) {
-			printf("%d -> %d : No path!\n", start + 1, i + 1);
-			continue;
+		if (distance[i] == INF) {
+			printf("%d -> %d : 경로 없음\n", start + 1, i + 1);
+		} else {
+			printf("%d -> %d : 길이 %d,  경로 : ", start + 1, i + 1, distance[i]);
+			print_path(i);
+			printf("\n");
 		}
-		printf("%d -> %d : Dist[%d] = %d \t경로 : ", start + 1, i + 1, i + 1, dist[i]);
-		print_dijkstra_path(prev, i);
-		printf("\n");
 	}
 
-	free(dist);
-	free(found);
-	free(prev);
+	free(distance); free(found); free(prev);
 }
 
-/* ------------------------------------------------------------------ */
-/* 4. Floyd 최단 경로                                                   */
-/* ------------------------------------------------------------------ */
-int *A;      /* A[i][j]   : i -> j 최단 거리 */
-int *via;    /* via[i][j] : i -> j 최단 경로가 거쳐가는 중간 노드 (-1 이면 직접 연결) */
 
-#define AA(i, j)  A[(i) * num_node + (j)]
-#define VIA(i, j) via[(i) * num_node + (j)]
+/* ================================================================== */
+/*  4. Floyd 최단 경로 (강의자료 : A[i][j], next[i][j])                  */
+/* ================================================================== */
 
-/* i 와 j 사이의 중간 노드들을 순서대로 출력 (i, j 자신은 제외) */
-void print_floyd_middle(int i, int j)
+int **A;                 /* A[i][j]    : i 에서 j 까지 최단 거리 */
+int **next;              /* next[i][j] : i 에서 j 로 갈 때 거쳐가는 정점 k (-1 이면 바로 연결) */
+
+/* i 와 j 사이에서 거쳐가는 정점들을 출력 : Path(i,k) + k + Path(k,j) */
+void floyd_path(int i, int j)
 {
-	int k = VIA(i, j);
-	if (k == -1) return;
-	print_floyd_middle(i, k);
+	int k = next[i][j];
+	if (k == -1) return;                   /* 바로 연결되어 있으면 중간 정점 없음 */
+	floyd_path(i, k);
 	printf(" -> %d", k + 1);
-	print_floyd_middle(k, j);
-}
-
-void print_floyd_path(int i, int j)
-{
-	if (AA(i, j) >= INF) {
-		printf("No path!");
-		return;
-	}
-	printf("%d", i + 1);
-	print_floyd_middle(i, j);
-	if (i != j) printf(" -> %d", j + 1);
+	floyd_path(k, j);
 }
 
 void floyd(void)
 {
 	int i, j, k;
 
-	A   = (int *)malloc(sizeof(int) * num_node * num_node);
-	via = (int *)malloc(sizeof(int) * num_node * num_node);
+	A    = (int **)malloc(sizeof(int *) * num_node);
+	next = (int **)malloc(sizeof(int *) * num_node);
+	for (i = 0; i < num_node; i++) {
+		A[i]    = (int *)malloc(sizeof(int) * num_node);
+		next[i] = (int *)malloc(sizeof(int) * num_node);
+	}
 
-	for (i = 0; i < num_node; i++)
+	for (i = 0; i < num_node; i++)         /* 배열 A의 초기값 = weight */
 		for (j = 0; j < num_node; j++) {
-			if (i == j)               AA(i, j) = 0;
-			else if (has_edge(i, j))  AA(i, j) = W(i, j);
-			else                      AA(i, j) = INF;
-			VIA(i, j) = -1;
+			if (weight[i][j] == NONE) A[i][j] = INF;
+			else                      A[i][j] = weight[i][j];
+			next[i][j] = -1;
 		}
 
-	/* k 를 거쳐가는 경로가 더 짧으면 그 값으로 갱신 */
 	for (k = 0; k < num_node; k++)
 		for (i = 0; i < num_node; i++)
 			for (j = 0; j < num_node; j++)
-				if (AA(i, k) < INF && AA(k, j) < INF &&
-				    AA(i, k) + AA(k, j) < AA(i, j)) {
-					AA(i, j) = AA(i, k) + AA(k, j);
-					VIA(i, j) = k;
+				if (A[i][k] + A[k][j] < A[i][j]) {
+					A[i][j] = A[i][k] + A[k][j];
+					next[i][j] = k;        /* k 를 거쳐가는 것이 더 짧음 */
 				}
 }
 
@@ -397,146 +344,153 @@ void floyd_menu(void)
 
 	floyd();
 
-	s = input_node("출발 노드를 입력하세요.");
-	d = input_node("도착 노드를 입력하세요.");
+	printf("출발 노드와 도착 노드를 입력하세요.(1 ~ %d)\n--> ", num_node);
+	scanf("%d %d", &s, &d);
+	s--; d--;                              /* 1번부터 -> 0번부터 */
 
-	printf("\n[Floyd 최단 경로]\n");
-	if (AA(s, d) >= INF) {
-		printf("%d -> %d : No path!\n", s + 1, d + 1);
+	printf("\nFloyd 최단 경로\n");
+	if (s < 0 || s >= num_node || d < 0 || d >= num_node) {
+		printf("잘못된 노드 번호입니다.\n");
+	} else if (A[s][d] >= INF) {
+		printf("%d -> %d : 경로 없음\n", s + 1, d + 1);
 	} else {
-		printf("%d -> %d : shortest path length (%d)\n", s + 1, d + 1, AA(s, d));
-		printf("%d -> %d : shortest path : ", s + 1, d + 1);
-		print_floyd_path(s, d);
+		printf("%d -> %d : 길이 %d,  경로 : %d", s + 1, d + 1, A[s][d], s + 1);
+		floyd_path(s, d);
+		if (s != d) printf(" -> %d", d + 1);
 		printf("\n");
 	}
 
-	/* 모든 노드 쌍의 최단 경로 길이 (행렬) */
-	printf("\n[모든 노드 쌍의 최단 경로 길이]\n    ");
-	for (j = 0; j < num_node; j++) printf("%5d", j + 1);
+	/* 모든 노드 쌍의 최단 경로 길이 (표) */
+	printf("\n모든 노드 쌍의 최단 경로 길이\n    ");
+	for (j = 0; j < num_node; j++) printf("%4d", j + 1);
 	printf("\n");
 	for (i = 0; i < num_node; i++) {
-		printf("%3d ", i + 1);
+		printf("%4d", i + 1);
 		for (j = 0; j < num_node; j++) {
-			if (AA(i, j) >= INF) printf("%5s", "INF");
-			else                 printf("%5d", AA(i, j));
+			if (A[i][j] >= INF) printf("   *");
+			else                printf("%4d", A[i][j]);
 		}
 		printf("\n");
 	}
 
 	/* 모든 노드 쌍의 최단 경로 */
-	printf("\n[모든 노드 쌍의 최단 경로]\n");
+	printf("\n모든 노드 쌍의 최단 경로\n");
 	for (i = 0; i < num_node; i++)
 		for (j = 0; j < num_node; j++) {
 			if (i == j) continue;
-			if (AA(i, j) >= INF) {
-				printf("%d -> %d : No path!\n", i + 1, j + 1);
+			if (A[i][j] >= INF) {
+				printf("%d -> %d : 경로 없음\n", i + 1, j + 1);
 				continue;
 			}
-			printf("%d -> %d : 길이 %3d, 경로 : ", i + 1, j + 1, AA(i, j));
-			print_floyd_path(i, j);
-			printf("\n");
+			printf("%d -> %d : 길이 %2d,  경로 : %d", i + 1, j + 1, A[i][j], i + 1);
+			floyd_path(i, j);
+			printf(" -> %d\n", j + 1);
 		}
 
+	for (i = 0; i < num_node; i++) {
+		free(A[i]);
+		free(next[i]);
+	}
 	free(A);
-	free(via);
+	free(next);
 }
 
-/* ------------------------------------------------------------------ */
-/* main                                                                */
-/* ------------------------------------------------------------------ */
+
+/* ================================================================== */
+/*  main                                                               */
+/* ================================================================== */
+
+/* 1 ~ num_node 사이의 노드 번호를 입력받아 0부터 시작하는 번호로 반환 */
+int input_node(void)
+{
+	int node;
+	while (1) {
+		printf("출발 노드를 선택하세요.(1 ~ %d)\n--> ", num_node);
+		scanf("%d", &node);
+		if (node >= 1 && node <= num_node) return node - 1;
+		printf("잘못된 노드 번호입니다.\n");
+	}
+}
+
+/* 0(최소) 또는 1(최대) 입력 */
+int input_type(void)
+{
+	int type;
+	while (1) {
+		printf("Min = 0, Max = 1\n--> ");
+		scanf("%d", &type);
+		if (type == 0 || type == 1) return type;
+		printf("0또는 1이 아닙니다. 다시 입력해주세요\n");
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	FILE *fp;
+	char filename[100];
 	int i, j, menu;
-	char fname_buf[256];
-	char *filename;
 
+	/* 명령행 인자로 파일 이름을 받는다. (없으면 직접 입력) */
 	if (argc == 2) {
-		filename = argv[1];
+		fp = fopen(argv[1], "r");
 	} else {
-		/* 더블클릭 등으로 인자 없이 실행한 경우 : 파일 이름을 직접 입력받음 */
-		printf("ERROR: <Usage> graph graph.txt\n");
-		printf("그래프 파일 이름을 입력하세요 (예: graph_B.txt)\n--> ");
-		if (scanf("%255s", fname_buf) != 1) {
-			pause_exit();
-			return 1;
-		}
-		clear_input();
-		filename = fname_buf;
+		printf("<Usage>: graph graph.txt\n");
+		printf("파일 이름을 입력하세요 : ");
+		scanf("%s", filename);
+		fp = fopen(filename, "r");
 	}
-	fp = fopen(filename, "r");
 	if (fp == NULL) {
-		printf("ERROR: %s 파일을 열 수 없습니다. (exe 와 같은 폴더에 있는지 확인하세요)\n", filename);
-		pause_exit();
-		return 1;
+		printf("파일을 열 수 없습니다.\n");
+		return 0;
 	}
 
-	/* 노드 개수를 읽고 인접 행렬을 동적 할당 */
-	if (fscanf(fp, "%d", &num_node) != 1 || num_node <= 0) {
-		printf("ERROR: 노드 개수를 읽을 수 없습니다.\n");
-		fclose(fp);
-		pause_exit();
-		return 1;
-	}
-	weight = (int *)malloc(sizeof(int) * num_node * num_node);
+	/* 노드 개수를 읽고 인접 행렬을 동적 할당한다. */
+	fscanf(fp, "%d", &num_node);
+	weight = (int **)malloc(sizeof(int *) * num_node);
+	for (i = 0; i < num_node; i++)
+		weight[i] = (int *)malloc(sizeof(int) * num_node);
+
 	for (i = 0; i < num_node; i++)
 		for (j = 0; j < num_node; j++)
-			if (fscanf(fp, "%d", &W(i, j)) != 1) {
-				printf("ERROR: 인접 행렬 데이터가 부족합니다.\n");
-				free(weight);
-				fclose(fp);
-				pause_exit();
-				return 1;
-			}
+			fscanf(fp, "%d", &weight[i][j]);
 	fclose(fp);
 
 	printf("\n노드 개수 : %d\n", num_node);
 	for (i = 0; i < num_node; i++) {
 		for (j = 0; j < num_node; j++)
-			printf("%4d", W(i, j));
+			printf("%4d", weight[i][j]);
 		printf("\n");
 	}
 
 	while (1) {
 		printf("\n-------------------------------------\n");
-		printf("1. Kruskal MST                       \n");
-		printf("2. Prim MST                          \n");
-		printf("3. Dijkstra SP(Shortest Path)        \n");
-		printf("4. Floyd SP(Shortest Path)           \n");
-		printf("5. Exit                              \n");
+		printf("1. Kruskal MST\n");
+		printf("2. Prim MST\n");
+		printf("3. Dijkstra SP(Shortest Path)\n");
+		printf("4. Floyd SP(Shortest Path)\n");
+		printf("5. Exit\n");
 		printf("-------------------------------------\n");
-		printf("원하는 메뉴의 번호를 입력하세요.     \n--> ");
+		printf("원하는 메뉴의 번호를 입력하세요.\n--> ");
+		if (scanf("%d", &menu) != 1) break;
 
-		if (scanf("%d", &menu) != 1) {
-			if (feof(stdin)) break;
-			clear_input();
-			continue;
-		}
-
-		switch (menu) {
-		case 1:
-			kruskal(input_min_max());
-			break;
-		case 2: {
-			int type = input_min_max();
-			int start = input_node("출발 노드를 선택하세요.");
-			prim(type, start);
-			break;
-		}
-		case 3:
-			dijkstra(input_node("출발 노드를 선택하세요."));
-			break;
-		case 4:
+		if (menu == 1) {
+			kruskal(input_type());
+		} else if (menu == 2) {
+			int type = input_type();
+			prim(input_node(), type);
+		} else if (menu == 3) {
+			shortest_path(input_node());
+		} else if (menu == 4) {
 			floyd_menu();
+		} else if (menu == 5) {
 			break;
-		case 5:
-			free(weight);
-			return 0;
-		default:
+		} else {
 			printf("1 ~ 5 사이의 번호를 입력하세요.\n");
 		}
 	}
 
+	for (i = 0; i < num_node; i++)
+		free(weight[i]);
 	free(weight);
 	return 0;
 }
