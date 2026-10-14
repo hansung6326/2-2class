@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pr13</title>
+</head>
+<body>
+    <h3>pr13</h3>
+    <hr>
+    <video id="video" src="media/bear.mp4" width="500" height="400"></video>
+    <div id="div"></div>
+    <button id="play" onclick="control(event)">play</button>
+    <button id="pause" onclick="control(event)">pause</button>
+    <button id="replay" onclick="control(event)">replay</button>
+    <button id="vol-" onclick="control(event)">vol-</button>
+    <button id="vol+" onclick="control(event)">vol+</button>
+    <button id="mute" onclick="control(event)">mute on/off</button>
+
+    <script>
+        let div = document.getElementById("div");
+        let video = document.getElementById("video");
+
+        function control(e){
+            let id = e.target.id;
+            if(id == "play"){
+                video.play();
+                div.innerHTML = video.src + "를 재생중입니다";
+            }else if(id == "pause"){
+                video.pause();
+                div.innerHTML = "일시중지되었습니다.";
+            }else if(id == "replay"){
+                video.load();
+                video.play();
+                div.innerHTML = video.src + "를 다시 재생합니다.";
+            }else if(id == "vol-"){
+                if(video.volume <= 0.1)
+                    video.volume = 0;
+                else
+                    video.volume -= 0.1;
+                div.innerHTML = "음량 0.1 감소." + "현재 " + video.volume;
+            }else if(id == "vol+"){
+                if(video.volume >= 0.9)
+                    video.volume = 1;
+                else   
+                    video.volume += 0.1;
+                div.innerHTML = "음량 0.1 증가." + "현재 " + video.volume;
+            }else if(id == "mute"){
+                video.muted = !video.muted;
+                if(video.muted)
+                    div.innerHTML = "음소거";
+                else
+                    div.innerHTML = "음소거 해제";
+            }
+            
+        }
+    </script>
+</body>
+</html>
