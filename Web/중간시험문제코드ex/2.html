@@ -8,10 +8,13 @@
 <script>
   function even(n) {
     // 본인이 작성하라
-
+    for(let i=1; i<=n; i++){
+      if(i % 2 == 0)
+        document.write(i + " ");
+    }
   }
 
-  let x = Math.random()*10;
+  let x = Math.random()*10 + 1;
   let n = Math.floor(x);
   document.write("1에서 "+n+ "까지 숫자중에서 <br>")
   document.write("<hr>")
