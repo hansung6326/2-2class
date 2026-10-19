@@ -6,7 +6,15 @@
 <script>
 function search() {
 	// 본인이 작성하라
+	if(!window.sessionStorage) { alert("지원하지 않습니다."); return;}
+	let key = document.getElementById("key").value;
+	let name = sessionStorage.getItem(key);
+	if(name == null) {
+		alert(key + " 과일이 없습니다."); return;
+	}
 
+	document.getElementById("name").value = name;
+	
 }
 </script>
 </head>
