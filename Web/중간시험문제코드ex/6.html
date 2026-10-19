@@ -21,7 +21,9 @@ div {
     } 
     function timeout(obj) {
         // 본인이 작성하라
-
+        let current = new Date();
+        obj.innerHTML = current.toLocaleTimeString()
+        timerID = setTimeout("timeout(timer)", 1000); // 1초 후 timeout() 호출
     }
     function controlClock() {
         if(timerID == null) {
