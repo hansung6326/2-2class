@@ -6,7 +6,15 @@
 <script>
 function createP(arg1,text) {
 	// 본인이 작성하라
-
+	let parent = arg1.parentElement;
+	let newP = document.createElement("p");
+	newP.innerHTML = text;
+	newP.style.backgroundColor = "yellow";
+	newP.onclick = function (){
+		let p = this.parentElement;
+		p.removeChild(this);
+	};
+	parent.appendChild(newP);
 }
 </script>
 </head>
