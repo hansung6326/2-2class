@@ -28,7 +28,7 @@ function send() {
 // 워커 태스크로부터 결과를 기다리는 리스너 등록
 worker.onmessage = function (e) {
 	// 본인이 작성하라
-
+	document.getElementById("output").value = e.data.first - e.data.second;
 }
 </script>
 </body>
