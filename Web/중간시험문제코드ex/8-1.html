@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TITLE</title>
+<script>
+function store() {
+	if(!window.sessionStorage) { alert("지원하지 않습니다."); return;}
+	let name = document.getElementById("name").value;
+	let key = document.getElementById("key").value;
+	sessionStorage.setItem(key, name);
+}
+</script>
+</head>
+<body>
+<h3>과일명과 개수 입력</h3>
+<hr>
+<form>
+<label>과일명 <input id="key" type="text" size="10"></label>
+<br>
+<label>개수 <input id="name" type="text" size="10"></label>
+<input type="button" value="스토리지에 저장" onclick="store()">
+</form>
+<br>
+<a href="8.html">과일명으로 개수 검색 페이지로</a>
+</body>
+</html>

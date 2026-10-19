@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TITLE</title></head>
+<body>
+<script>
+function printName(array) {
+  document.write("이름 : ");
+  for(i=0; i<array.length; i++)
+    document.write(array[i]+" ");
+  document.write("<br>");	
+}
+function print_2(array) {
+  // 본인이 작성하라
+  document.write("두번째 이름을 출력 : " + array[1]);
+
+}
+let old = new Array("alice", "bob", "cindy", "david","edward");
+let n=[]; // 배열 n 선언
+for(let i=0; i<3; i++) { 
+  let x = Math.random()*5 ;// 인덱스범위가 0에서 4 사이의 난수 3개 생성
+  n[i] = Math.floor(x);
+}
+let names = new Array(old[n[0]], old[n[1]], old[n[2]]);
+
+// 배열의 각 이름 출력
+printName(names);
+// 세번째 이름을 출력
+print_2(names);
+</script>
+</body>
+</html>
