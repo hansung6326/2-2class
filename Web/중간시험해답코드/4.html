@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>문서의 동적 구성</title>
+<script>
+function createP(arg1,text) {
+	// 본인이 작성하라
+	let parent = arg1.parentElement; // 부모 HTML 태그 요소
+	let newP = document.createElement("p");
+	newP.innerHTML = text;
+	newP.style.backgroundColor = "yellow";
+	newP.onclick = function() {
+		let par = this.parentElement; // 부모 HTML 태그 요소
+		par.removeChild(this); // 자신을 부모로부터 제거
+	};
+	parent.appendChild(newP);
+}
+</script>
+</head>
+<body> 
+<h3>P 객체를 동적으로 생성, 삽입, 삭제하는 예제</h3>
+<hr>
+<p onclick="createP(this,'새로 생성된 P 입니다')">P생성</p>
+</body>
+</html>
