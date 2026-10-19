@@ -6,6 +6,18 @@
 <script>
 function findChecked() {
 	// 본인이 작성하라
+	let city = document.getElementsByName("city");
+	let p = document.getElementById("display");
+	let found = null;
+	for(let i=0; i<city.length; i++){
+		if(city[i].checked == true){
+			found = city[i];
+		}
+	}
+	if(found != null)
+		p.innerHTML = found.value + "이 선택되었음";
+	else
+		p.innerHTML = "선택된 것이 없음";
 	
 }
 </script>
