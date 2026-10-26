@@ -1,0 +1,11 @@
+{
+    // Code Runner 확장(▶ 버튼)으로 실행할 때 한글이 깨지지 않도록 CP949 옵션을 붙인다.
+    "code-runner.executorMap": {
+        "c": "cd $dir && gcc -fexec-charset=CP949 $fileName -o $fileNameWithoutExt.exe && $fileNameWithoutExt.exe"
+    },
+    // scanf 입력을 받을 수 있도록 출력 탭이 아니라 터미널에서 실행한다.
+    "code-runner.runInTerminal": true,
+    "code-runner.saveFileBeforeRun": true,
+    // 위 명령(&&)이 동작하도록 이 폴더에서는 터미널을 명령 프롬프트(cmd)로 연다.
+    "terminal.integrated.defaultProfile.windows": "Command Prompt"
+}

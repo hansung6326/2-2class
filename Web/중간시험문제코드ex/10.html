@@ -105,6 +105,7 @@ function draw(currentX, currentY) { // e는 MouseEvent 객체
 	// 본인이 작성하라
 	context.beginPath();
 	context.strokeStyle = strokeColor;	
+	context.lineWidth = widthInputObj.value;
 	let radius = Math.sqrt(Math.pow((startX-currentX),2)+Math.pow((startY-currentY),2));
 	context.arc(startX, startY, radius, Math.PI,0);
 	context.stroke();

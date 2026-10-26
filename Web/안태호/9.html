@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>워커 태스크 만들기</title>
+</head>
+<body>
+<h3>더하기</h3>
+<hr>
+<form>
+<input id="op1" type="text" size="5"> +
+<input id="op2" type="text" size="5"> 
+<input type="button" onclick="send()" value="더하기">
+<input id="result" type="text" size="5">
+</form>
+<script>
+let worker = new Worker("9.js");
+
+function send() {
+	let parameters = {
+		op1 : document.getElementById("op1").value,
+		op2 : document.getElementById("op2").value
+	};
+	// 입력 받은 점수를 워커 태스크로 보내기
+	worker.postMessage(parameters);
+}
+
+// 워커 태스크로부터 결과를 기다리는 리스너 등록
+worker.onmessage = function (e) {
+	// 본인이 작성하라
+	let op1 = parseInt(e.data.op1);
+	let op2 = parseInt(e.data.op2);
+	document.getElementById("result").value = op1 + op2;
+	
+}
+</script>
+</body>
+</html>

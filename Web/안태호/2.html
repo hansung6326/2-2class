@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TITLE</title>
+</head>
+<body>
+<script>
+  function multi_3(p) {
+    // 본인이 작성하라
+    for(let i=1; i<=p; i++){
+      if(i % 3 == 0)
+        document.write(i + " ");
+    }
+  }
+
+  let x = Math.random()*10;
+  let n = Math.floor(x);
+  document.write("1에서 "+(n+10)+ "까지 숫자중에서 <br>")
+  document.write("<hr>")
+  document.write("3의 배수는 ")
+  multi_3(n+10);
+</script>
+</body>
+</html>
+

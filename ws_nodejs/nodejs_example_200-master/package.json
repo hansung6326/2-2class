@@ -1,0 +1,56 @@
+{
+  "name": "nodejs_example_200",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "charset": "^1.0.1",
+    "cheerio": "^1.0.0-rc.2",
+    "cheerio-httpcli": "^0.7.2",
+    "connect-multiparty": "^2.1.0",
+    "cookie-parser": "^1.4.3",
+    "curl-cmd": "0.0.1",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "http": "0.0.0",
+    "iconv-lite": "^0.4.19",
+    "jade": "^1.11.0",
+    "moment": "^2.19.2",
+    "morgan": "^1.9.0",
+    "mysql": "^2.15.0",
+    "node-libcurl": "^1.2.0",
+    "node-schedule": "^1.2.5",
+    "node-telegram-bot-api": "^0.29.0",
+    "nodemailer": "^4.4.1",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "pug": "^2.0.0-rc.4",
+    "request": "^2.83.0",
+    "serve-static": "^1.13.1",
+    "socket.io": "^2.0.4",
+    "winston": "^2.4.0",
+    "winston-daily-rotate-file": "^1.7.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.11.0",
+    "eslint-config-airbnb": "^15.1.0",
+    "eslint-config-airbnb-base": "^11.3.2",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-react": "^7.5.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kyeongrok/nodejs_example_200.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kyeongrok/nodejs_example_200/issues"
+  },
+  "homepage": "https://github.com/Kyeongrok/nodejs_example_200#readme"
+}

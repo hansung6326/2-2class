@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TITLE</title>
+<script>
+let num = new Array(20);
+function store() {
+	sessionStorage.clear();
+  sessionStorage.setItem('13', 'Third');
+	sessionStorage.setItem('11', 'First');
+	sessionStorage.setItem('12', 'Second');
+
+}
+
+function view(start) {
+	// 본인이 작성하라
+	for(let i = start; i<(start+3); i++){
+		num[i] = sessionStorage.getItem(i);
+	}
+}
+
+function print(start) {
+	for(i=start; i<(start+3); i++) {
+		document.write(i);
+		document.write('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+		document.write(num[i]);
+		document.write("</br>");
+	}
+}
+</script>
+</head>
+<body>
+<h3>session storage 내용</h3>
+<hr>
+<script>
+	document.write('key value'+'</br>');
+	store();
+	//document.write('sorting전'+'</br>');	
+	view(11);
+	document.write('=sorting후'+'</br>');	
+	print(11);
+	sessionStorage.setItem('1', '하나');
+	sessionStorage.setItem('2', '둘');
+	sessionStorage.setItem('3', '셋');
+	//document.write('sorting전'+'</br>');
+	view(1);
+	document.write('=sorting후'+'</br>');	
+	print(1);
+</script>
+<hr>
+</body>
+</html>

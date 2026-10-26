@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SocketPage</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+    <script>
+
+        // 소켓연결
+        const socket = io();
+        console.log('Server connection');
+
+        window.onload = function() {
+
+            // Message 전달
+            document.getElementById('button').onclick = function () {
+                const text = document.getElementById('text').value;
+                console.log('clientMsg -> Server');
+                socket.emit('clientmsg', text);
+            };
+
+            // 실시간 Interval 전달
+            document.getElementById('status').onclick = function () {
+                console.log('Status event(Client)');
+                socket.emit('status');
+            };
+
+            // 이벤트 연결
+           socket.on('msg2', function (data) {
+                document.writeln('<li>');
+                document.writeln(data);
+                document.writeln('</li>');
+            });
+        };
+
+        socket.on('msg', function (data) {
+            console.log(data);
+        });
+
+    </script>
+</head>
+<body>
+<h1>Socket.io Page</h1>
+<ui>
+</ui>
+<input type="text" id="text" />
+<input type="button" id="button" value="send"/>
+<input type="button" id="status" value="IntervalTest"/>
+</body>
+</html>

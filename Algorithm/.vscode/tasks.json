@@ -1,0 +1,18 @@
+{
+    // Ctrl+Shift+B : 지금 열려 있는 .c 파일을 CP949 옵션으로 빌드하고 바로 실행한다.
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "C 빌드 후 실행 (CP949)",
+            "type": "shell",
+            "command": "gcc -fexec-charset=CP949 ${fileBasename} -o ${fileBasenameNoExtension}.exe && ${fileBasenameNoExtension}.exe",
+            "options": {
+                "cwd": "${fileDirname}",
+                "shell": { "executable": "cmd.exe", "args": ["/d", "/c"] }
+            },
+            "group": { "kind": "build", "isDefault": true },
+            "presentation": { "reveal": "always", "focus": true, "panel": "shared", "clear": true },
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}
